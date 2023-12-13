@@ -3,7 +3,6 @@ import React, { useCallback, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { OPENAIURL } from "../../config/api";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from 'react-toastify';
 import Loader from "@/components/Loader";
 

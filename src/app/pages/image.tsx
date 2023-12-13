@@ -82,7 +82,12 @@ const ImageAI = () => {
     <div className="w-full">
       {imageHistory.length > 0 ? (
         imageHistory.map((item, key) => (
-          <div key={key}>
+          <div
+            key={key}
+            className={`ml-16 ${
+              key === imageHistory.length - 1 ? "pb-20" : ""
+            }`}
+          >
             <div className="border-[1px] border-gray-700 rounded-[16px] p-3 mt-2 mb-2 flex flex-col gap-3">
               <p className="text-[16px]">{item.type}</p>
               <div className="text-gray-600 flex text-[16px] gap-1 justify-between">
@@ -106,7 +111,7 @@ const ImageAI = () => {
         </div>
       )}
       <div
-        className={`max-w-[60%] ml-[8%]  m-x-auto flex search-btn text-left absolute bottom-10 w-3/4`}
+        className={`max-w-[60%] ml-[8%]  m-x-auto flex search-btn text-left fixed bottom-5 w-3/4`}
       >
         <input
           className="inline-block p-[14px] bg-transparent text-[14px] search-txt w-full"

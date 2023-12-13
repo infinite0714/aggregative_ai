@@ -18,18 +18,13 @@ const Home = () => {
             All services are available and you can use with your current
             account!
           </p>
-          
+
           <div className="flex flex-wrap justify-evenly mt-6">
-          <CardWithImage cardName="Text AI" cardImage="/images/pic1.png" />
-          <CardWithImage cardName="Image AI" cardImage="/images/pic1.png" />
-
-          <CardWithImage cardName="Voice AI" cardImage="/images/pic1.png" />
-
-          <CardWithImage cardName="Video AI" cardImage="/images/pic1.png" />
-
-          
+            <CardWithImage cardName="Text AI" cardImage="/images/pic1.png" />
+            <CardWithImage cardName="Image AI" cardImage="/images/pic2.png" />
+            <CardWithImage cardName="Voice AI" cardImage="/images/pic3.png" />
+            <CardWithImage cardName="Video AI" cardImage="/images/pic4.png" />
           </div>
-
         </div>
       </div>
     </div>

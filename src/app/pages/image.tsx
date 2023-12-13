@@ -52,8 +52,7 @@ const ImageAI = () => {
         }, 10000);
       }
     } catch (error: any) {
-      setLoading(false);
-      toast.error(error, {
+      toast.error("Insufficient token", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -63,6 +62,7 @@ const ImageAI = () => {
         progress: undefined,
         theme: "dark",
       });
+      setLoading(false);
     }
   };
 

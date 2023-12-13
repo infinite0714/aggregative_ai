@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { OPENAIURL } from "../../config/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Chat {
   type: string;
@@ -23,6 +24,7 @@ const TextAI = () => {
         content: searchQuery,
       },
     ];
+
     setChatHistory(updatedChatHistory);
 
     try {
@@ -50,7 +52,9 @@ const TextAI = () => {
           content: response.data.choices[0].message.content,
         });
       }
+
       setChatHistory(updatedChatHistory);
+      setSearchQuery("");
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -62,7 +66,10 @@ const TextAI = () => {
     <div className="w-full">
       {chatHistory.length > 0 ? (
         chatHistory.map((chat, key) => (
-          <div key={key} className={`ml-16 ${key === chatHistory.length - 1 ? 'pb-20' : ''}`}>
+          <div
+            key={key}
+            className={`ml-16 ${key === chatHistory.length - 1 ? "pb-20" : ""}`}
+          >
             <div className="flex items-center">
               <Image
                 className="text-left mb-4 mt-4 pr-4 "
@@ -72,29 +79,54 @@ const TextAI = () => {
                 alt=""
               />
               <p className="text-fuchsia-500">
-              {chat.type == "question" ? "Me" : "Agai"}
+                {chat.type == "question" ? "Me" : "Agai"}
               </p>
-             
             </div>
+
             <p className="text-[16px] mb-4 pl-8">{chat.content}</p>
+
+            {loading && key === chatHistory.length - 1 && (
+              <>
+                <div className="flex flex-col ">
+                  <div className="flex items-center">
+                    <Image
+                      className="text-left mb-4 mt-4 pr-4 "
+                      src={chat.type == "question" ? "/me.png" : "/agai.png"}
+                      height={30}
+                      width={30}
+                      alt=""
+                    />
+                    <p className="text-fuchsia-500">Agai</p>
+                  </div>
+                  <Skeleton className="ml-8 h-4 w-[350px] rounded-xl bg-gray-800 mb-2" />
+                  <Skeleton className="ml-8 h-4 w-[350px] rounded-xl bg-gray-800 mb-2" />
+                </div>
+              </>
+            )}
           </div>
         ))
       ) : (
         <div>
-            <Image className="m-auto mt-32" src={"/logo.svg"} height={200} width={200} alt="" />
-            <h2 className="text-center text-2xl">How can we help you?</h2>
-            </div>
+          <Image
+            className="m-auto mt-32"
+            src={"/logo.svg"}
+            height={200}
+            width={200}
+            alt=""
+          />
+          <h2 className="text-center text-2xl">How can we help you?</h2>
+        </div>
       )}
 
-      
       <div
-        className={`max-w-[60%] ml-[8%]  m-x-auto flex search-btn text-left fixed bottom-5 w-3/4`}
+        className={`max-w-[60%] ml-[10%]  m-x-auto flex search-btn text-left fixed bottom-5 w-3/4`}
       >
         <input
           className="inline-block p-[14px] bg-transparent text-[14px] search-txt w-full"
           type="text"
           name="text"
           placeholder="What are you looking for?"
+          value={searchQuery}
           onChange={(e: any) => setSearchQuery(e.target.value)}
           disabled={loading}
         />
@@ -123,8 +155,7 @@ const TextAI = () => {
           )}
         </div>
       </div>
-      </div>
-   
+    </div>
   );
 };
 

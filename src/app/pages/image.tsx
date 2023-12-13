@@ -44,11 +44,9 @@ const ImageAI = () => {
         headers,
       });
       
-      console.log('--- keyResponse ---', keyResponse)
-
       if (keyResponse.data.status === "success") {
         setTimeout(async () => {
-          await getImageFunc(keyResponse.data.task_id);
+          await getImageFunc(keyResponse.data.task_id, updatedImageHistory);
         }, 10000);
       }
     } catch (error) {
@@ -57,7 +55,7 @@ const ImageAI = () => {
     }
   };
 
-  const getImageFunc = async (id: string) => {
+  const getImageFunc = async (id: string, data: Chat[]) => {
     try {
       const imageResponse = await axios.post(MIDJOURNEYURL, { task_id: id });
 
@@ -66,17 +64,16 @@ const ImageAI = () => {
         imageResponse.data.status === "processing"
       ) {
         setTimeout(async () => {
-          await getImageFunc(imageResponse.data.task_id);
+          await getImageFunc(imageResponse.data.task_id, data);
         }, 10000);
       }
 
       if (imageResponse.data.status === "finished") {
-        // console.log(imageResponse.data.task_result.image_url)
-        imageHistory.push({
+        data.push({
           type: "answer",
           content: imageResponse.data.task_result.image_url,
         });
-        setImageHistory(imageHistory);
+        setImageHistory(data);
         setLoading(false);
       }
     } catch (error) {

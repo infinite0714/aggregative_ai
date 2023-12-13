@@ -123,7 +123,9 @@ const ImageAI = () => {
                 width={30}
                 alt=""
               />
+              <div className="text-fuchsia-500">
               {item.type == "question" ? "Me" : "Agai"}
+              </div>
             </div>
             {item.type == "question" ? (
               <p className="text-[16px] mb-4 pl-8">{item.content}</p>
@@ -162,6 +164,7 @@ const ImageAI = () => {
           placeholder="What are you looking for?"
           onChange={(e: any) => setSearchQuery(e.target.value)}
           disabled={loading}
+          value={searchQuery}
         />
         <div className="inline-block float-right cursor-pointer">
           {loading ? (

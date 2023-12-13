@@ -126,7 +126,7 @@ const ImageAI = () => {
               </div>
             </div>
             {item.type == "question" ? (
-              <p className="text-[16px] text-justify  mb-4 pl-8">{item.content}</p>
+              <p className="text-[16px] text-justify pr-8  mb-4 pl-8">{item.content}</p>
             ) : (
               <Image
                 className="m-auto"

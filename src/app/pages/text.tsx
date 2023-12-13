@@ -23,6 +23,7 @@ const TextAI = () => {
         content: searchQuery,
       },
     ];
+    setChatHistory(updatedChatHistory);
 
     try {
       const data = {
@@ -73,14 +74,6 @@ const TextAI = () => {
               {chat.type == "question" ? "Me" : "Agai"}
             </div>
             <p className="text-[16px] mb-4 pl-8">{chat.content}</p>
-            {/* <div className="border-[1px] border-gray-700 rounded-[16px] p-3 mt-2 mb-2 flex flex-col gap-3">
-                <p className="text-[16px]">{chat.type}</p>
-                <div className="text-gray-600 flex text-[16px] gap-1 justify-between">
-                  <div className="flex gap-1">
-                    <span className="w-full">{chat.content}</span>
-                  </div>
-                </div>
-              </div> */}
           </div>
         ))
       ) : (

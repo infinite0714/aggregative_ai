@@ -109,7 +109,7 @@ const TextAI = () => {
               </p>
             </div>
 
-            <p className="text-[16px] mb-4 pl-8">{chat.content}</p>
+            <p className="text-[16px] text-justify mb-4 pr-8 pl-8">{chat.content}</p>
 
             {loading && key === chatHistory.length - 1 && (
               <Loader />

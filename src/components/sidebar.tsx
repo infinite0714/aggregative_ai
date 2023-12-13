@@ -29,7 +29,7 @@ const Sidebar = ({ onClick, setCardType }: SidebarProps) => {
 
       <Button
         className="bg-fuchsia-700 hover:bg-fuchsia-800 rounded-[16px] w-full flex items-center gap-1 text-lg p-6 mb-6"
-        onClick={onClick}
+        onClick={()=>setCardType("TextAI")}
       >
         <Image src={"/icons/plus.svg"} height={30} width={30} alt="+" /> New
         Chat

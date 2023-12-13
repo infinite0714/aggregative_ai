@@ -46,21 +46,44 @@ const TextAI = () => {
         Authorization: `Bearer ${OPENAI_TOKEN}`,
       };
 
-      const response = await axios.post(OPENAIURL, data, { headers });
-
-      if (response.data.choices && response.data.choices.length > 0) {
-        updatedChatHistory.push({
-          type: "answer",
-          content: response.data.choices[0].message.content,
-        });
-      }
-
-      setChatHistory(updatedChatHistory);
-      setSearchQuery("");
+      axios.post(OPENAIURL, data, { headers })
+      .then((response)=>{
+        if (response.data.choices && response.data.choices.length > 0) {
+          updatedChatHistory.push({
+            type: "answer",
+            content: response.data.choices[0].message.content,
+          });
+          setSearchQuery("");
+          setChatHistory(updatedChatHistory);
+          
+        } 
+        setLoading(false);
+      })
+      .catch((err)=> {
+        toast.error('Network Error!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        })
+        setLoading(false);
+      })  
+    } catch (error: any) {
       setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      toast("Wow so easy!")
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
       console.error("Error generating text:", error);
     }
   };

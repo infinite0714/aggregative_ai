@@ -2,6 +2,7 @@ import TextSend from "@/components/text-send";
 import React, { useCallback, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
+import { toast } from 'react-toastify';
 import { MIDJOURNEYIMAGURL, MIDJOURNEYURL } from "../../config/api";
 import Loader from "@/components/Loader";
 
@@ -50,8 +51,18 @@ const ImageAI = () => {
           await getImageFunc(keyResponse.data.task_id, updatedImageHistory);
         }, 10000);
       }
-    } catch (error) {
+    } catch (error: any) {
       setLoading(false);
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
       console.error("Error generating key:", error);
     }
   };
@@ -78,7 +89,17 @@ const ImageAI = () => {
         setSearchQuery("");
         setLoading(false);
       }
-    } catch (error) {
+    } catch (error: any) {
+      toast.error('Network Error!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      })
       setLoading(false);
       console.error("Error getting image:", error);
     }

@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { ELEVENLABSURL } from "../../config/api";
-
+import { toast } from 'react-toastify';
 interface Chat {
   type: string;
   content: string;
@@ -27,33 +27,54 @@ const AudioAI = () => {
     setAudioHistory(updatedAudioHistory);
 
     const data = await textToSpeech()
-    const blob = new Blob([data], { type: 'audio/mpeg' });
-    const url = URL.createObjectURL(blob);
-
-    updatedAudioHistory.push({
-      type: "answer",
-      content: url,
-    });
-    setAudioHistory(updatedAudioHistory);
+    if(data){
+      const blob = new Blob([data], { type: 'audio/mpeg' });
+      const url = URL.createObjectURL(blob);
+  
+      updatedAudioHistory.push({
+        type: "answer",
+        content: url,
+      });
+      setAudioHistory(updatedAudioHistory);
+    }
+    else {
+      const msg ="Unusual activity detected. Free Tier usage disabled. If you are using proxy/VPN you might need to purchase a Paid Plan to not trigger our abuse detectors. Free Tier only works if users do not abuse it, for example by creating multiple free accounts. If we notice that many people try to abuse it, we will need to reconsider Free Tier altogether. Please play fair.\nPlease purchase any Paid Subscription to continue.";
+      toast.error(msg, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
     setLoading(false);
   };
 
   const textToSpeech = async () => {
-    const API_KEY = process.env.NEXT_PUBLIC_ELEVENLABS_KEY;
-    const speechDetails = await axios.request({
-        method: 'POST',
-        url: ELEVENLABSURL,
-        headers: {
-          accept: 'audio/mpeg',
-          'content-type': 'application/json',
-          'xi-api-key': `${API_KEY}`,
-        },
-        data: {
-          text: searchQuery,
-        },
-        responseType: 'arraybuffer',
-      });
-    return speechDetails.data;
+    try{
+      const API_KEY = process.env.NEXT_PUBLIC_ELEVENLABS_KEY;
+      const speechDetails = await axios.request({
+          method: 'POST',
+          url: ELEVENLABSURL,
+          headers: {
+            accept: 'audio/mpeg',
+            'content-type': 'application/json',
+            'xi-api-key': `${API_KEY}`,
+          },
+          data: {
+            text: searchQuery,
+          },
+          responseType: 'arraybuffer',
+        });
+      return speechDetails.data;
+    } catch (error: any) {
+      setLoading(false);
+      toast(error)
+      console.error("Error generating text:", error);
+    }
   };
 
   return (

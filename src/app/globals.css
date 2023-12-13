@@ -31,6 +31,7 @@ body {
   padding-left: 20px;
   border-radius: 15px;
   color: white;
+  background-color: black;
 }
 
 .search-txt[type="text"]:focus {

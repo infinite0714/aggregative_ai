@@ -62,16 +62,19 @@ const TextAI = () => {
     <div className="w-full">
       {chatHistory.length > 0 ? (
         chatHistory.map((chat, key) => (
-          <div key={key} className="ml-16">
+          <div key={key} className={`ml-16 ${key === chatHistory.length - 1 ? 'pb-20' : ''}`}>
             <div className="flex items-center">
               <Image
-                className="text-left mb-4 mt-4 pr-4"
+                className="text-left mb-4 mt-4 pr-4 "
                 src={chat.type == "question" ? "/me.png" : "/agai.png"}
                 height={30}
                 width={30}
                 alt=""
               />
+              <p className="text-fuchsia-500">
               {chat.type == "question" ? "Me" : "Agai"}
+              </p>
+             
             </div>
             <p className="text-[16px] mb-4 pl-8">{chat.content}</p>
           </div>
@@ -83,8 +86,9 @@ const TextAI = () => {
             </div>
       )}
 
+      
       <div
-        className={`max-w-[60%] ml-[8%]  m-x-auto flex search-btn text-left absolute bottom-10 w-3/4`}
+        className={`max-w-[60%] ml-[8%]  m-x-auto flex search-btn text-left fixed bottom-5 w-3/4`}
       >
         <input
           className="inline-block p-[14px] bg-transparent text-[14px] search-txt w-full"
@@ -119,7 +123,8 @@ const TextAI = () => {
           )}
         </div>
       </div>
-    </div>
+      </div>
+   
   );
 };
 

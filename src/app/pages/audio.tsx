@@ -1,31 +1,125 @@
-import PremiumCard from "@/components/premium";
-import Image from "next/image";
+import TextSend from "@/components/text-send";
 import React, { useCallback, useState } from "react";
+import axios from "axios";
+import Image from "next/image";
+import { ELEVENLABSURL } from "../../config/api";
+
+interface Chat {
+  type: string;
+  content: string;
+}
 
 const AudioAI = () => {
-  return (
-    <>
-      <div className="w-full ">
-        <Image
-          className="m-auto mt-32"
-          src={"/logo.svg"}
-          height={200}
-          width={200}
-          alt=""
-        />
+  const [searchQuery, setSearchQuery] = useState("");
+  const [audioHistory, setAudioHistory] = useState<Chat[]>([]);
+  const [loading, setLoading] = useState(false);
 
-        <div
-          className={`flex search-btn text-left absolute bottom-10 w-3/4 m-auto`}
-        >
-          <input
-            className="inline-block p-[14px] bg-transparent text-[14px] search-txt w-full"
-            type="text"
-            name="text"
-            placeholder="What are you looking for?"
-          />
-          <div className="inline-block float-right cursor-pointer">
+  const getContent = async() => {
+    setLoading(true);
+    const updatedAudioHistory = [
+      ...audioHistory,
+      {
+        type: "question",
+        content: searchQuery,
+      },
+    ];
+
+    setAudioHistory(updatedAudioHistory);
+
+    const data = await textToSpeech()
+    const blob = new Blob([data], { type: 'audio/mpeg' });
+    const url = URL.createObjectURL(blob);
+
+    updatedAudioHistory.push({
+      type: "answer",
+      content: url,
+    });
+    setAudioHistory(updatedAudioHistory);
+    setLoading(false);
+  };
+
+  const textToSpeech = async () => {
+    const API_KEY = process.env.NEXT_PUBLIC_ELEVENLABS_KEY;
+    const speechDetails = await axios.request({
+        method: 'POST',
+        url: ELEVENLABSURL,
+        headers: {
+          accept: 'audio/mpeg',
+          'content-type': 'application/json',
+          'xi-api-key': `${API_KEY}`,
+        },
+        data: {
+          text: searchQuery,
+        },
+        responseType: 'arraybuffer',
+      });
+    return speechDetails.data;
+  };
+
+  return (
+    <div className="w-full">
+      {audioHistory.length > 0 ? (
+        audioHistory.map((item, key) => (
+          <div key={key} className={`ml-16 ${
+            key === audioHistory.length - 1 ? "pb-20" : ""
+          }`} >
+            <div className="flex items-center">
+              <Image
+                className="text-left mb-4 mt-4 pr-4"
+                src={item.type == "question" ? "/me.png" : "/agai.png"}
+                height={30}
+                width={30}
+                alt=""
+              />
+              {item.type == "question" ? "Me" : "Agai"}
+            </div>
             {
-              <button className="send-btn flex items-center p-[15px]">
+              item.type == "question" ? 
+              <p className="text-[16px] mb-4 pl-8">{item.content}</p>
+              :
+              (
+                <audio className="pl-8" autoPlay controls>
+                  <source src={item.content} type="audio/mpeg" />
+                </audio>
+              )
+            }
+          </div>
+        ))
+      ) : (
+        <div>
+          <Image
+            className="m-auto mt-32"
+            src={"/logo.svg"}
+            height={200}
+            width={200}
+            alt=""
+          />
+          <h2 className="text-center text-2xl">How can we help you?</h2>
+        </div>
+      )}
+      <div
+        className={`max-w-[60%] ml-[8%]  m-x-auto flex search-btn text-left fixed bottom-5 w-3/4`}
+      >
+        <input
+          className="inline-block p-[14px] bg-transparent text-[14px] search-txt w-full"
+          type="text"
+          name="text"
+          placeholder="What are you looking for?"
+          onChange={(e: any) => setSearchQuery(e.target.value)}
+          disabled={loading}
+        />
+        <div className="inline-block float-right cursor-pointer">
+          {
+            loading ? 
+            (
+              <button className="send-btn">Loading ...</button>
+            ) 
+              : 
+            (
+              <button
+                className="send-btn flex items-center p-[15px]"
+                onClick={() => getContent()}
+              >
                 <svg
                   width="25"
                   height="24"
@@ -38,14 +132,13 @@ const AudioAI = () => {
                     fill="white"
                   />
                 </svg>
-                Send
+                {!loading ? 'Send' : 'Loading...' }
               </button>
-            }
-          </div>
+            )
+          }
         </div>
-        <PremiumCard />
       </div>
-    </>
+    </div>
   );
 };
 

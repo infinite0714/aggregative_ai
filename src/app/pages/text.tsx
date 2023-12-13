@@ -4,7 +4,7 @@ import axios from "axios";
 import Image from "next/image";
 import { OPENAIURL } from "../../config/api";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { toast } from 'react-toastify';
 interface Chat {
   type: string;
   content: string;
@@ -58,6 +58,7 @@ const TextAI = () => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
+      toast("Wow so easy!")
       console.error("Error generating text:", error);
     }
   };

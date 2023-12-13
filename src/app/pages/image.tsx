@@ -1,10 +1,10 @@
-import TextSend from "@/components/text-send";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { MIDJOURNEYIMAGURL, MIDJOURNEYURL } from "../../config/api";
-import Loader from "@/components/Loader";
+import ProgressBar from "@/components/progress";
+
 
 interface Chat {
   type: string;
@@ -89,7 +89,7 @@ const ImageAI = () => {
         setLoading(false);
       }
     } catch (error: any) {
-      toast.error('Network Error!', {
+      toast.error("Network Error!", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -98,7 +98,7 @@ const ImageAI = () => {
         draggable: true,
         progress: undefined,
         theme: "dark",
-      })
+      });
       setLoading(false);
     }
   };
@@ -122,11 +122,13 @@ const ImageAI = () => {
                 alt=""
               />
               <div className="text-fuchsia-500">
-              {item.type == "question" ? "Me" : "Agai"}
+                {item.type == "question" ? "Me" : "Agai"}
               </div>
             </div>
             {item.type == "question" ? (
-              <p className="text-[16px] text-justify pr-8  mb-4 pl-8">{item.content}</p>
+              <p className="text-[16px] text-justify pr-8  mb-4 pl-8">
+                {item.content}
+              </p>
             ) : (
               <Image
                 className="m-auto mt-4"
@@ -137,7 +139,11 @@ const ImageAI = () => {
               />
             )}
 
-            {loading && key === imageHistory.length - 1 && <Loader />}
+            {loading && key === imageHistory.length - 1 && 
+            <>
+              <ProgressBar />
+            </>
+            }
           </div>
         ))
       ) : (
@@ -164,7 +170,7 @@ const ImageAI = () => {
           disabled={loading}
           value={searchQuery}
           onKeyPress={(e) => {
-            if (e.key === 'Enter' && !loading) {
+            if (e.key === "Enter" && !loading) {
               getContent();
             }
           }}

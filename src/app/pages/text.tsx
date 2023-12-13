@@ -84,7 +84,6 @@ const TextAI = () => {
         progress: undefined,
         theme: "dark",
       });
-      console.error("Error generating text:", error);
     }
   };
 

@@ -63,7 +63,6 @@ const ImageAI = () => {
         progress: undefined,
         theme: "dark",
       });
-      console.error("Error generating key:", error);
     }
   };
 
@@ -101,7 +100,6 @@ const ImageAI = () => {
         theme: "dark",
       })
       setLoading(false);
-      console.error("Error getting image:", error);
     }
   };
 

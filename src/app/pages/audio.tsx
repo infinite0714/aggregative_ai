@@ -73,7 +73,6 @@ const AudioAI = () => {
     } catch (error: any) {
       setLoading(false);
       toast(error)
-      console.error("Error generating text:", error);
     }
   };
 

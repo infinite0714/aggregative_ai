@@ -5,6 +5,8 @@ import Image from "next/image";
 import { OPENAIURL } from "../../config/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from 'react-toastify';
+import Loader from "@/components/Loader";
+
 interface Chat {
   type: string;
   content: string;
@@ -87,22 +89,7 @@ const TextAI = () => {
             <p className="text-[16px] mb-4 pl-8">{chat.content}</p>
 
             {loading && key === chatHistory.length - 1 && (
-              <>
-                <div className="flex flex-col ">
-                  <div className="flex items-center">
-                    <Image
-                      className="text-left mb-4 mt-4 pr-4 "
-                      src={chat.type == "question" ? "/me.png" : "/agai.png"}
-                      height={30}
-                      width={30}
-                      alt=""
-                    />
-                    <p className="text-fuchsia-500">Agai</p>
-                  </div>
-                  <Skeleton className="ml-8 h-4 w-[350px] rounded-xl bg-gray-800 mb-2" />
-                  <Skeleton className="ml-8 h-4 w-[350px] rounded-xl bg-gray-800 mb-2" />
-                </div>
-              </>
+              <Loader />
             )}
           </div>
         ))

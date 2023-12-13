@@ -5,8 +5,8 @@ import { chatData } from "./chat/chat-data";
 
 const Sidebar = () => {
   return (
-    <div className="p-6 w-[350px] justify-center min-h-screen bg-gray-900 border-r border-gray-800">
-      <div className="flex gap-2 mb-6">
+    <div className="p-6 w-[360px] justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
+      <div className="flex gap-2 mb-6 ">
         <Image src={"logo.svg"} width={60} height={60} alt="Aggregator AI" />
         <div className="flex flex-col font-bold tracking-wide text-xl tracking-widest">
           <div className="flex ">
@@ -20,7 +20,7 @@ const Sidebar = () => {
       <div className="h-[1px] bg-gray-800 mb-10"></div>
 
       <Button className="bg-fuchsia-700 rounded-[16px] w-full flex items-center gap-1 text-lg p-6 mb-6">
-        <Image src={"/icon/plus.svg"} height={30} width={30} alt="+" /> New Chat
+        <Image src={"/icons/plus.svg"} height={30} width={30} alt="+" /> New Chat
       </Button>
 
       <p className="text-lg mb-3">Activity</p>
@@ -28,18 +28,18 @@ const Sidebar = () => {
       {chatData.map((chat) => (
         <div key={chat.id}>
           <div className="border-[1px] border-gray-700 rounded-[16px] p-3 mt-2 mb-2 flex flex-col gap-3">
-            <p className="text-[16px]">How to design logo online</p>
+            <p className="text-[16px]">{chat.title}</p>
             <div className="text-gray-600 flex text-[16px] gap-1 justify-between">
               <div className="flex gap-1">
                 <Image
-                  src={"/icon/text-icon.svg"}
+                  src={chat.iconPath}
                   height={16}
                   width={16}
                   alt="T"
                 />
-                <span className="max-w-[100px] truncate">Generate a logo</span>
+                <span className="max-w-[100px] truncate">{chat.desc}</span>
               </div>
-              <span className="text-gray-400">30m ago</span>
+              <span className="text-gray-400 text-[14px]">{chat.time}</span>
             </div>
           </div>
         </div>

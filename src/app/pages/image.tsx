@@ -163,6 +163,11 @@ const ImageAI = () => {
           onChange={(e: any) => setSearchQuery(e.target.value)}
           disabled={loading}
           value={searchQuery}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter' && !loading) {
+              getContent();
+            }
+          }}
         />
         <div className="inline-block float-right cursor-pointer">
           {loading ? (

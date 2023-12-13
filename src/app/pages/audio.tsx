@@ -127,6 +127,11 @@ const AudioAI = () => {
           placeholder="What are you looking for?"
           onChange={(e: any) => setSearchQuery(e.target.value)}
           disabled={loading}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter' && !loading) {
+              getContent();
+            }
+          }}
         />
         <div className="inline-block float-right cursor-pointer">
           {

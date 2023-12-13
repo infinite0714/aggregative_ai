@@ -138,6 +138,12 @@ const TextAI = () => {
           value={searchQuery}
           onChange={(e: any) => setSearchQuery(e.target.value)}
           disabled={loading}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter' && !loading) {
+              getContent();
+            }
+          }}
+        
         />
         <div className="inline-block float-right cursor-pointer">
           {loading ? (

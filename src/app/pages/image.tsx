@@ -104,12 +104,12 @@ const ImageAI = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full pt-4">
       {imageHistory.length > 0 ? (
         imageHistory.map((item, key) => (
           <div
             key={key}
-            className={`ml-16 ${
+            className={`ml-4 md:ml-16 ${
               key === imageHistory.length - 1 ? "pb-20" : ""
             }`}
           >
@@ -129,10 +129,10 @@ const ImageAI = () => {
               <p className="text-[16px] text-justify pr-8  mb-4 pl-8">{item.content}</p>
             ) : (
               <Image
-                className="m-auto"
+                className="m-auto mt-4"
                 src={item.content}
-                height={500}
-                width={500}
+                height={300}
+                width={300}
                 alt=""
               />
             )}

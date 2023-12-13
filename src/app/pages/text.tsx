@@ -88,12 +88,12 @@ const TextAI = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full pt-4">
       {chatHistory.length > 0 ? (
         chatHistory.map((chat, key) => (
           <div
             key={key}
-            className={`ml-16 ${key === chatHistory.length - 1 ? "pb-20" : ""}`}
+            className={`ml-4 md:ml-16 ${key === chatHistory.length - 1 ? "pb-20" : ""}`}
           >
             <div className="flex items-center">
               <Image

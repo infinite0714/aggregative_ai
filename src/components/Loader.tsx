@@ -17,8 +17,8 @@ const Loader = () => {
             />
             <p className="text-fuchsia-500">Agai</p>
           </div>
-          <Skeleton className="ml-8 h-4 w-[350px] rounded-xl bg-gray-800 mb-2" />
-          <Skeleton className="ml-8 h-4 w-[350px] rounded-xl bg-gray-800 mb-2" />
+          <Skeleton className="ml-8 h-4 w-[150px] md:w-[350px] rounded-xl bg-gray-800 mb-2" />
+          <Skeleton className="ml-8 h-4 w-[150px] md:w-[350px] rounded-xl bg-gray-800 mb-2" />
         </div>
       </>
     </div>

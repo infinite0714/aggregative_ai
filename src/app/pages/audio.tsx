@@ -77,10 +77,10 @@ const AudioAI = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full pt-4">
       {audioHistory.length > 0 ? (
         audioHistory.map((item, key) => (
-          <div key={key} className={`ml-16 ${
+          <div key={key} className={`ml-4 md:ml-16 ${
             key === audioHistory.length - 1 ? "pb-20" : ""
           }`} >
             <div className="flex items-center">

@@ -12,31 +12,23 @@ import VideoAI from "./pages/video";
 
 const Home = () => {
   const [cardType, setCardType] = useState("");
-  const onCardButtonClick = useCallback(
-    (cardType: string) => {
-      setCardType(cardType);
-    },
-    []
-  );
+  const onCardButtonClick = useCallback((cardType: string) => {
+    setCardType(cardType);
+  }, []);
 
-  const onNewChatButtonClick = useCallback(
-    () => {
-      setCardType("");
-    },
-    []
-  );
-
+  const onNewChatButtonClick = useCallback(() => {
+    setCardType("");
+  }, []);
 
   return (
-    <div className="flex">
+    <div className="flex ">
       <div className="w-[478px] relative">
-        <Sidebar onClick={()=>onNewChatButtonClick()} />
+        <Sidebar onClick={() => onNewChatButtonClick()} />
       </div>
 
       <div className="w-full">
         <Navbar />
-        {
-          cardType == '' &&
+        {cardType == "" && (
           <>
             <Header />
             <div className="flex flex-col gap-1 ml-6 mt-10">
@@ -47,22 +39,38 @@ const Home = () => {
               </p>
 
               <div className="flex flex-wrap mt-6">
-                <CardWithImage cardName="Text AI" cardImage="/images/pic1.png" onClick={()=> onCardButtonClick('TextAI')} />
-                <CardWithImage cardName="Image AI" cardImage="/images/pic2.png" onClick={()=> onCardButtonClick('ImageAI')} />
-                <CardWithImage cardName="Voice AI" cardImage="/images/pic3.png" onClick={()=> onCardButtonClick('VoiceAI')} />
-                <CardWithImage cardName="Text AI" cardImage="/images/pic4.png" onClick={()=> onCardButtonClick('TextAI')} />
+                <CardWithImage
+                  cardName="Text AI"
+                  cardImage="/images/pic1.png"
+                  onClick={() => onCardButtonClick("TextAI")}
+                />
+                <CardWithImage
+                  cardName="Image AI"
+                  cardImage="/images/pic2.png"
+                  onClick={() => onCardButtonClick("ImageAI")}
+                />
+                <CardWithImage
+                  cardName="Voice AI"
+                  cardImage="/images/pic3.png"
+                  onClick={() => onCardButtonClick("AudioAI")}
+                />
+                <CardWithImage
+                  cardName="Video AI"
+                  cardImage="/images/pic4.png"
+                  onClick={() => onCardButtonClick("VideoAI")}
+                />
               </div>
             </div>
 
             <div className="flex flex-wrap">
-            <SuggestionCard />
+              <SuggestionCard />
             </div>
           </>
-        }
-        { cardType == 'TextAI' && <TextAI />}
-        { cardType == 'ImageAI' && <ImageAI />}
-        { cardType == 'AudioAI' && <AudioAI />}
-        { cardType == 'VideoAI' && <VideoAI />}
+        )}
+        {cardType == "TextAI" && <TextAI />}
+        {cardType == "ImageAI" && <ImageAI />}
+        {cardType == "AudioAI" && <AudioAI />}
+        {cardType == "VideoAI" && <VideoAI />}
       </div>
     </div>
   );

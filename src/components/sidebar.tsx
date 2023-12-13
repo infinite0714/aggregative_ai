@@ -10,8 +10,11 @@ type SidebarProps = {
 
 const Sidebar = ({ onClick, setCardType }: SidebarProps) => {
   return (
-    <div className="p-6 w-[20%] justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
-      <div onClick={()=>setCardType("")} className="flex gap-2 mb-6 cursor-pointer ">
+    <div className="p-6 w-[100%] z-[100] md:w-[20%]  justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
+      <div
+        onClick={() => setCardType("")}
+        className="flex gap-2 mb-6 cursor-pointer "
+      >
         <Image src={"logo.svg"} width={60} height={60} alt="Aggregator AI" />
         <div className="flex flex-col font-bold tracking-wide text-xl tracking-widest">
           <div className="flex ">

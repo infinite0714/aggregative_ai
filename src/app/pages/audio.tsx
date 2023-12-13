@@ -118,10 +118,10 @@ const AudioAI = () => {
         </div>
       )}
       <div
-        className={`max-w-[60%] ml-[8%]  m-x-auto flex search-btn text-left fixed bottom-5 w-3/4`}
+        className={` md:max-w-[60%] ml-[2%] md:ml-[10%]  m-x-auto flex search-btn text-left fixed bottom-5 w-[96%] md:w-3/4`}
       >
         <input
-          className="inline-block p-[14px] bg-transparent text-[14px] search-txt w-full"
+          className="inline-block md:p-[14px] bg-transparent text-[14px] search-txt w-full"
           type="text"
           name="text"
           placeholder="What are you looking for?"

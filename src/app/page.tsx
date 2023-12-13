@@ -23,7 +23,7 @@ const Home = () => {
 
   return (
     <div className="flex ">
-      <div className="w-[25%] relative">
+      <div className="w-[25%] relative hidden md:block">
         <Sidebar setCardType={setCardType} onClick={() => onNewChatButtonClick()} />
       </div>
 
@@ -34,12 +34,12 @@ const Home = () => {
             <Header />
             <div className="flex flex-col gap-1 ml-6 mt-10">
               <h1 className="text-2xl">What do you need?</h1>
-              <p className="text-gray-500">
+              <p className="text-gray-500 w-[90%] md:w-[auto]">
                 All services are available and you can use with your current
                 account!
               </p>
 
-              <div className="flex flex-wrap mt-6">
+              <div className="flex flex-wrap mt-6 md:ml-0 ml-4">
                 <CardWithImage
                   cardName="Text AI"
                   cardImage="/images/pic1.png"

@@ -7,9 +7,9 @@ type SidebarProps = {
   onClick?: () => void;
 };
 
-const Sidebar = ({onClick}: SidebarProps ) => {
+const Sidebar = ({ onClick }: SidebarProps) => {
   return (
-    <div className="p-6 w-[360px] justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
+    <div className="p-6 w-[20%] justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
       <div className="flex gap-2 mb-6 ">
         <Image src={"logo.svg"} width={60} height={60} alt="Aggregator AI" />
         <div className="flex flex-col font-bold tracking-wide text-xl tracking-widest">
@@ -23,8 +23,12 @@ const Sidebar = ({onClick}: SidebarProps ) => {
 
       <div className="h-[1px] bg-gray-800 mb-10"></div>
 
-      <Button className="bg-fuchsia-700 rounded-[16px] w-full flex items-center gap-1 text-lg p-6 mb-6" onClick={onClick}>
-        <Image src={"/icons/plus.svg"} height={30} width={30} alt="+" /> New Chat
+      <Button
+        className="bg-fuchsia-700 rounded-[16px] w-full flex items-center gap-1 text-lg p-6 mb-6"
+        onClick={onClick}
+      >
+        <Image src={"/icons/plus.svg"} height={30} width={30} alt="+" /> New
+        Chat
       </Button>
 
       <p className="text-lg mb-3">Activity</p>
@@ -35,12 +39,7 @@ const Sidebar = ({onClick}: SidebarProps ) => {
             <p className="text-[16px]">{chat.title}</p>
             <div className="text-gray-600 flex text-[16px] gap-1 justify-between">
               <div className="flex gap-1">
-                <Image
-                  src={chat.iconPath}
-                  height={16}
-                  width={16}
-                  alt="T"
-                />
+                <Image src={chat.iconPath} height={16} width={16} alt="T" />
                 <span className="max-w-[100px] truncate">{chat.desc}</span>
               </div>
               <span className="text-gray-400 text-[14px]">{chat.time}</span>

@@ -22,7 +22,7 @@ const Home = () => {
 
   return (
     <div className="flex ">
-      <div className="w-[478px] relative">
+      <div className="w-[25%] relative">
         <Sidebar onClick={() => onNewChatButtonClick()} />
       </div>
 

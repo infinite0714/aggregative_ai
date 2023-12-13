@@ -24,7 +24,7 @@ const Home = () => {
   return (
     <div className="flex ">
       <div className="w-[25%] relative">
-        <Sidebar onClick={() => onNewChatButtonClick()} />
+        <Sidebar setCardType={setCardType} onClick={() => onNewChatButtonClick()} />
       </div>
 
       <div className="w-full">

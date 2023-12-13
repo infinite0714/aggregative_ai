@@ -3,7 +3,11 @@ import React from "react";
 import { Button } from "./ui/button";
 import { chatData } from "./chat/chat-data";
 
-const Sidebar = () => {
+type SidebarProps = {
+  onClick?: () => void;
+};
+
+const Sidebar = ({onClick}: SidebarProps ) => {
   return (
     <div className="p-6 w-[360px] justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
       <div className="flex gap-2 mb-6 ">
@@ -19,7 +23,7 @@ const Sidebar = () => {
 
       <div className="h-[1px] bg-gray-800 mb-10"></div>
 
-      <Button className="bg-fuchsia-700 rounded-[16px] w-full flex items-center gap-1 text-lg p-6 mb-6">
+      <Button className="bg-fuchsia-700 rounded-[16px] w-full flex items-center gap-1 text-lg p-6 mb-6" onClick={onClick}>
         <Image src={"/icons/plus.svg"} height={30} width={30} alt="+" /> New Chat
       </Button>
 

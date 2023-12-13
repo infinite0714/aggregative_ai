@@ -1,0 +1,110 @@
+import TextSend from "@/components/text-send";
+import React, { useCallback, useState } from "react";
+import axios from "axios";
+import Image from "next/image";
+import { OPENAIURL } from "../../config/api";
+
+interface Chat {
+  type: string;
+  content: string;
+}
+
+const TextAI = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [chatHistory, setChatHistory] = useState<Chat[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const getContent = async () => {
+    setLoading(true);
+    const updatedChatHistory = [
+      ...chatHistory,
+      {
+        type: 'question',
+        content: searchQuery
+      }
+    ];
+
+    try {
+      const data = {
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'user',
+            content: searchQuery,
+          },
+        ],
+      };
+
+      const OPENAI_TOKEN = process.env.NEXT_PUBLIC_OPENAI_TOKEN;
+
+      const headers = {
+        Authorization: `Bearer ${OPENAI_TOKEN}`,
+      };
+
+      const response = await axios.post(OPENAIURL, data, { headers });
+      
+      if (response.data.choices && response.data.choices.length > 0) {
+        updatedChatHistory.push({
+          type: 'answer',
+          content: response.data.choices[0].message.content
+        });
+      }
+      setChatHistory(updatedChatHistory);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error('Error generating text:', error);
+    }
+  };
+
+  return (
+      <div className="w-full">
+        {
+          chatHistory.length > 0 ? chatHistory.map((chat, key) => (
+            <div key={key} className="ml-16">
+              <div className="flex items-center">
+                <Image className="text-left mb-4 mt-4 pr-4" src={chat.type == 'question' ? "/me.png" : "/agai.png" } height={30} width={30} alt="" />
+                {chat.type == 'question' ? "Me" : "Agai" }
+              </div>
+              <p className="text-[16px] mb-4 pl-8">{chat.content}</p>
+              {/* <div className="border-[1px] border-gray-700 rounded-[16px] p-3 mt-2 mb-2 flex flex-col gap-3">
+                <p className="text-[16px]">{chat.type}</p>
+                <div className="text-gray-600 flex text-[16px] gap-1 justify-between">
+                  <div className="flex gap-1">
+                    <span className="w-full">{chat.content}</span>
+                  </div>
+                </div>
+              </div> */}
+            </div>
+          ))
+          :
+          <Image className="m-auto mt-32" src={"/logo.svg"} height={300} width={300} alt="" />
+        }
+        <div className={`flex search-btn text-left absolute bottom-10 w-3/4 m-auto`}>
+          <input
+            className="inline-block p-[14px] bg-transparent text-[14px] search-txt w-full"
+            type="text"
+            name="text"
+            placeholder="What are you looking for?"
+            onChange={(e: any) => setSearchQuery(e.target.value)}
+            disabled={loading}
+          />
+          <div className="inline-block float-right cursor-pointer">
+            {
+              loading ? 
+                <button className="send-btn">Loading ...</button>
+              :
+                <button className="send-btn flex items-center p-[15px]" onClick={()=> getContent()}>
+                  <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.5698 8.50989L10.0098 4.22989C4.25978 1.34989 1.89978 3.70989 4.77978 9.45989L5.64978 11.1999C5.89978 11.7099 5.89978 12.2999 5.64978 12.8099L4.77978 14.5399C1.89978 20.2899 4.24978 22.6499 10.0098 19.7699L18.5698 15.4899C22.4098 13.5699 22.4098 10.4299 18.5698 8.50989ZM15.3398 12.7499H9.93977C9.52978 12.7499 9.18977 12.4099 9.18977 11.9999C9.18977 11.5899 9.52978 11.2499 9.93977 11.2499H15.3398C15.7498 11.2499 16.0898 11.5899 16.0898 11.9999C16.0898 12.4099 15.7498 12.7499 15.3398 12.7499Z" fill="white"/>
+                  </svg>
+                  Send
+                </button>
+            }
+          </div>
+        </div>
+      </div>
+  );
+};
+
+export default TextAI;

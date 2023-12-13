@@ -26,3 +26,35 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+.search-btn {
+  border: 1px solid #54597C;
+  padding-left: 20px;
+  border-radius: 15px;
+  color: white;
+}
+
+.search-txt[type="text"]:focus {
+  outline: none;
+}
+
+.textInput {
+  border-radius: 20px;
+  height: 45px;
+  padding-left: 10px;
+}
+
+.generatebutton {
+  background: #dd891f;
+  margin-left: 10px;
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.send-btn {
+  width: 100px;
+  height: 50px;
+  background: #8E24AA;
+  color: white;
+  border-radius: 11px;
+  margin: 5px;
+}

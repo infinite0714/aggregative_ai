@@ -27,7 +27,7 @@ const Home = () => {
       </div>
 
       <div className="w-full">
-        <Navbar />
+        <Navbar setCardType={setCardType} cardType={cardType} />
         {cardType == "" && (
           <>
             <Header />

@@ -9,7 +9,8 @@ import TextAI from "./pages/text";
 import ImageAI from "./pages/image";
 import AudioAI from "./pages/audio";
 import VideoAI from "./pages/video";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Home = () => {
   const [cardType, setCardType] = useState("");
   const onCardButtonClick = useCallback((cardType: string) => {
@@ -22,8 +23,8 @@ const Home = () => {
 
   return (
     <div className="flex ">
-      <div className="w-[25%] relative">
-        <Sidebar onClick={() => onNewChatButtonClick()} />
+      <div className="w-[25%] relative hidden md:block">
+        <Sidebar setCardType={setCardType} onClick={() => onNewChatButtonClick()} />
       </div>
 
       <div className="w-full">
@@ -33,12 +34,12 @@ const Home = () => {
             <Header />
             <div className="flex flex-col gap-1 ml-6 mt-10">
               <h1 className="text-2xl">What do you need?</h1>
-              <p className="text-gray-500">
+              <p className="text-gray-500 w-[90%] md:w-[auto]">
                 All services are available and you can use with your current
                 account!
               </p>
 
-              <div className="flex flex-wrap mt-6">
+              <div className="flex flex-wrap mt-6 md:ml-0 ml-4">
                 <CardWithImage
                   cardName="Text AI"
                   cardImage="/images/pic1.png"
@@ -72,6 +73,7 @@ const Home = () => {
         {cardType == "AudioAI" && <AudioAI />}
         {cardType == "VideoAI" && <VideoAI />}
       </div>
+      <ToastContainer />
     </div>
   );
 };

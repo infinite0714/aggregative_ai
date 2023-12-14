@@ -20,6 +20,7 @@ interface ChatActivityPayload {
 
 type SidebarProps = {
   onClick?: () => void;
+  setCardType: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const Sidebar = ({ onClick }: SidebarProps) => {
@@ -63,8 +64,11 @@ const Sidebar = ({ onClick }: SidebarProps) => {
   
 
   return (
-    <div className="p-6 w-[20%] justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
-      <div className="flex gap-2 mb-6 ">
+    <div className="p-6 w-[100%] z-[100] md:w-[20%]  justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
+      <div
+        onClick={() => setCardType("")}
+        className="flex gap-2 mb-6 cursor-pointer "
+      >
         <Image src={"logo.svg"} width={60} height={60} alt="Aggregator AI" />
         <div className="flex flex-col font-bold tracking-wide text-xl tracking-widest">
           <div className="flex ">
@@ -78,8 +82,8 @@ const Sidebar = ({ onClick }: SidebarProps) => {
       <div className="h-[1px] bg-gray-800 mb-10"></div>
 
       <Button
-        className="bg-fuchsia-700 rounded-[16px] w-full flex items-center gap-1 text-lg p-6 mb-6"
-        onClick={onClick}
+        className="bg-fuchsia-700 hover:bg-fuchsia-800 rounded-[16px] w-full flex items-center gap-1 text-lg p-6 mb-6"
+        onClick={()=>setCardType("TextAI")}
       >
         <Image src={"/icons/plus.svg"} height={30} width={30} alt="+" /> New
         Chat

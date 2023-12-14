@@ -8,7 +8,7 @@ const SuggestionCard = () => {
       {suggestionDemo.map((suggestion) => (
         <div
           key={suggestion.id}
-          className="w-[45%] m-8 border-[1px] border-gray-700 rounded-[16px] p-4 flex items-center justify-between mt-0 mr-0 cursor-pointer"
+          className="w-[85%] md:w-[45%] m-8 border-[1px] border-gray-700 rounded-[16px] p-4 flex items-center justify-between mt-0 mr-0 cursor-pointer"
         >
           <div>
             <p>{suggestion.title}</p>

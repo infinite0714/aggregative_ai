@@ -4,6 +4,7 @@ import axios from "axios";
 import Image from "next/image";
 import { STABLEDIFFUSION_URL } from "../../config/api";
 import { toast } from "react-toastify";
+import ProgressBar from "@/components/progress";
 interface Chat {
   type: string;
   content: string;
@@ -107,6 +108,11 @@ const VideoAI = () => {
                     <source src={item.content} type="video/mp4" />
                   </video>
                 )
+            }
+          {loading && key === videoHistory.length - 1 && 
+            <>
+              <ProgressBar  time={120}/>
+            </>
             }
           </div>
         ))

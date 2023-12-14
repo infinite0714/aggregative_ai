@@ -1,7 +1,12 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-const ProgressBar = () => {
+
+type ProgressBarProps = {
+  time: number;
+};
+
+const ProgressBar = ({time}: ProgressBarProps) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -11,7 +16,7 @@ const ProgressBar = () => {
           clearInterval(interval);
           return 100;
         }
-        const diff = 100 / 60;
+        const diff = 100 / time;
         return Math.min(oldProgress + diff, 100);
       });
     }, 1000);

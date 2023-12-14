@@ -141,7 +141,7 @@ const ImageAI = () => {
 
             {loading && key === imageHistory.length - 1 && 
             <>
-              <ProgressBar />
+              <ProgressBar  time={60}/>
             </>
             }
           </div>

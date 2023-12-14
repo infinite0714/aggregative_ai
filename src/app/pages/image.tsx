@@ -52,14 +52,15 @@ const ImageAI = () => {
         }, 10000);
       }
 
-      await supabase.from('chat_activities').insert([
-        {
-          title: "Image Inquiry",
-          iconPath: "/path/to/image-icon.svg",
-          time: new Date().toISOString(),
-          desc: searchQuery
-        }
-      ]);
+      const { error } = await supabase
+      .from('chat_activities')
+      .insert({
+        title: "Image Inquiry",
+        iconpath: "/path/to/image-icon.svg",
+        time: new Date().toISOString(),
+        description: searchQuery
+      });
+      console.log(error);
 
     } catch (error) {
       setLoading(false);

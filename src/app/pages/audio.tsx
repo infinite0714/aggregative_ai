@@ -16,14 +16,15 @@ const AudioAI = () => {
       //  Here you can add any logic related to audio processing
       // 
       // Sending user's text input to Supabase
-      await supabase.from('chat_activities').insert([
-        {
-          title: "Audio Inquiry",
-          iconPath: "/path/to/audio-icon.svg",
-          time: new Date().toISOString(),
-          desc: searchQuery
-        }
-      ]);
+      const { error } = await supabase
+      .from('chat_activities')
+      .insert({
+        title: "Audio Inquiry",
+        iconpath: "/path/to/audio-icon.svg",
+        time: new Date().toISOString(),
+        description: searchQuery
+      });
+      console.log(error);
 
       setSearchQuery("");
     } catch (error) {

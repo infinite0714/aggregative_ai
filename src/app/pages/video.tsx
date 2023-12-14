@@ -14,19 +14,17 @@ const VideoAI = () => {
     setLoading(true);
 
     try {
-      // Optional: Add logic for video processing here
+      const { error } = await supabase
+      .from('chat_activities')
+      .insert({
+        title: "Video Inquiry",
+        iconpath: "/path/to/video-icon.svg",
+        time: new Date().toISOString(),
+        description: searchQuery
+      });
+      console.log(error);
 
-      // Send user's text input to Supabase
-      await supabase.from('chat_activities').insert([
-        {
-          title: "Video Inquiry",
-          iconPath: "/path/to/video-icon.svg",
-          time: new Date().toISOString(),
-          desc: searchQuery
-        }
-      ]);
-
-      setSearchQuery(""); // Reset the search query
+      setSearchQuery("");
     } catch (error) {
       console.error("Error:", error);
     } finally {

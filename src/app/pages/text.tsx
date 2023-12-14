@@ -16,33 +16,47 @@ const TextAI = () => {
 
   const getContent = async () => {
     if (!searchQuery.trim()) return;
-
+  
     setLoading(true);
     const userQuery = { type: "question", content: searchQuery };
     setChatHistory(prev => [...prev, userQuery]);
-
+  
     try {
       const data = {
         model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: searchQuery }],
       };
-
+  
       const OPENAI_TOKEN = process.env.NEXT_PUBLIC_OPENAI_TOKEN;
       const headers = { Authorization: `Bearer ${OPENAI_TOKEN}` };
       const response = await axios.post(OPENAIURL, data, { headers });
-
+  
       if (response.data.choices && response.data.choices.length > 0) {
         const aiResponseContent = response.data.choices[0].message.content;
         const aiResponse = { type: "answer", content: aiResponseContent };
-
-       await supabase.from('chat_activities').insert([
-      { title: "User Query", iconPath: "/path/to/user-icon.svg", time: new Date().toISOString(), desc: searchQuery }
-    ]);
-
+  
+        const { error } = await supabase
+        .from('chat_activities')
+        .insert({
+          title: "User Query",
+          iconpath: "/path/to/user-icon.svg",
+          time: new Date().toISOString(),
+          description: searchQuery
+        });
+        console.log(error);
         setChatHistory(prev => [...prev, aiResponse]);
       }
     } catch (error) {
-      console.error("Error:", error);
+      if (axios.isAxiosError(error)) {
+        // This is an Axios Error
+        console.error("Axios error:", error.response?.data || error.message);
+      } else if (error instanceof Error) {
+        // This is a generic Error object
+        console.error("Error:", error.message);
+      } else {
+        // Unknown error type
+        console.error("An unknown error occurred:", error);
+      }
     } finally {
       setLoading(false);
     }

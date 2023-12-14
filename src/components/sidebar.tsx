@@ -31,10 +31,12 @@ const Sidebar = ({ onClick }: SidebarProps) => {
       const { data, error } = await supabase
         .from('chat_activities')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('time', { ascending: false });
+        
+        console.log(data)
   
       if (error) {
-        console.error('Error fetching chat data:', error);
+        console.error('Error fetching chat data:', JSON.stringify(error, null, 2));
       } else {
         setChatData(data);
       }
@@ -43,16 +45,21 @@ const Sidebar = ({ onClick }: SidebarProps) => {
     fetchChatData();
   
     const chatSubscription = supabase
-      .from('chat_activities')
-      .on('INSERT', (payload: ChatActivityPayload) => {
-        setChatData(currentData => [payload.new, ...currentData]);
-      })
-      .subscribe();
+    .channel('public-chat-activities')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_activities' }, payload => {
+      const newChat = payload.new as Chat; 
+      if (newChat) {
+        setChatData(currentData => [newChat, ...currentData]);
+      }
+    })
+    .subscribe();
   
-    return () => {
-      chatSubscription.unsubscribe();
-    };
+
+  return () => {
+    chatSubscription.unsubscribe();
+  };
   }, []);
+  
   
 
   return (

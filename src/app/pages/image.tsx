@@ -1,5 +1,6 @@
 import TextSend from "@/components/text-send";
 import React, { useCallback, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import axios from "axios";
 import Image from "next/image";
 import { MIDJOURNEYIMAGURL, MIDJOURNEYURL } from "../../config/api";
@@ -15,6 +16,7 @@ const ImageAI = () => {
   const [loading, setLoading] = useState(false);
 
   const getContent = async () => {
+    if (!searchQuery.trim()) return;
     setLoading(true);
     const updatedImageHistory = [
       ...imageHistory,
@@ -49,6 +51,16 @@ const ImageAI = () => {
           await getImageFunc(keyResponse.data.task_id, updatedImageHistory);
         }, 10000);
       }
+
+      await supabase.from('chat_activities').insert([
+        {
+          title: "Image Inquiry",
+          iconPath: "/path/to/image-icon.svg",
+          time: new Date().toISOString(),
+          desc: searchQuery
+        }
+      ]);
+
     } catch (error) {
       setLoading(false);
       console.error("Error generating key:", error);

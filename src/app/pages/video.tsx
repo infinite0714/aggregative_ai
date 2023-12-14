@@ -1,8 +1,41 @@
 import PremiumCard from "@/components/premium";
 import Image from "next/image";
+import { supabase } from "@/lib/supabase";
 import React, { useCallback, useState } from "react";
 
 const VideoAI = () => {
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSend = async () => {
+    if (!searchQuery.trim()) return;
+
+    setLoading(true);
+
+    try {
+      // Optional: Add logic for video processing here
+
+      // Send user's text input to Supabase
+      await supabase.from('chat_activities').insert([
+        {
+          title: "Video Inquiry",
+          iconPath: "/path/to/video-icon.svg",
+          time: new Date().toISOString(),
+          desc: searchQuery
+        }
+      ]);
+
+      setSearchQuery(""); // Reset the search query
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
   return (
     <>
       <div className="w-full ">

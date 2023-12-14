@@ -1,32 +1,55 @@
-import PremiumCard from "@/components/premium";
+import React, { useState } from "react";
 import Image from "next/image";
-import React, { useCallback, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import PremiumCard from "@/components/premium";
 
 const AudioAI = () => {
-  return (
-    <>
-      <div className="w-full ">
-        <Image
-          className="m-auto mt-32"
-          src={"/logo.svg"}
-          height={200}
-          width={200}
-          alt=""
-        />
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
 
-        <div
-          className={`flex search-btn text-left absolute bottom-10 w-3/4 m-auto`}
-        >
-          <input
-            className="inline-block p-[14px] bg-transparent text-[14px] search-txt w-full"
-            type="text"
-            name="text"
-            placeholder="What are you looking for?"
-          />
-          <div className="inline-block float-right cursor-pointer">
-            {
-              <button className="send-btn flex items-center p-[15px]">
-                <svg
+  const handleSend = async () => {
+    if (!searchQuery.trim()) return;
+
+    setLoading(true);
+
+    try {
+      //  Here you can add any logic related to audio processing
+      // 
+      // Sending user's text input to Supabase
+      await supabase.from('chat_activities').insert([
+        {
+          title: "Audio Inquiry",
+          iconPath: "/path/to/audio-icon.svg",
+          time: new Date().toISOString(),
+          desc: searchQuery
+        }
+      ]);
+
+      setSearchQuery("");
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="w-full">
+      <Image className="m-auto mt-32" src={"/logo.svg"} height={200} width={200} alt="" />
+      
+      <div className={`flex search-btn text-left absolute bottom-10 w-3/4 m-auto`}>
+        <input
+          className="inline-block p-[14px] bg-transparent text-[14px] search-txt w-full"
+          type="text"
+          name="text"
+          placeholder="What are you looking for?"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          disabled={loading}
+        />
+        <div className="inline-block float-right cursor-pointer">
+          <button className="send-btn flex items-center p-[15px]" onClick={handleSend}>
+            <svg
                   width="25"
                   height="24"
                   viewBox="0 0 25 24"
@@ -38,14 +61,13 @@ const AudioAI = () => {
                     fill="white"
                   />
                 </svg>
-                Send
-              </button>
-            }
-          </div>
+            Send
+          </button>
         </div>
-        <PremiumCard />
       </div>
-    </>
+
+      <PremiumCard />
+    </div>
   );
 };
 

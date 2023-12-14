@@ -1,13 +1,60 @@
 import Image from "next/image";
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { Button } from "./ui/button";
 import { chatData } from "./chat/chat-data";
+import { supabase } from "@/lib/supabase";
+
+
+interface Chat {
+  id: number;
+  title: string;
+  iconPath: string;
+  time: string;
+  desc: string;
+}
+
+interface ChatActivityPayload {
+  new: Chat;
+}
+
 
 type SidebarProps = {
   onClick?: () => void;
 };
 
 const Sidebar = ({ onClick }: SidebarProps) => {
+
+  const [chatData, setChatData] = useState<Chat[]>([]);
+
+  useEffect(() => {
+    const fetchChatData = async () => {
+      const { data, error } = await supabase
+        .from('chat_activities')
+        .select('*')
+        .order('created_at', { ascending: false });
+  
+      if (error) {
+        console.error('Error fetching chat data:', error);
+      } else {
+        setChatData(data);
+      }
+    };
+  
+    fetchChatData();
+  
+    const chatSubscription = supabase
+      .from('chat_activities')
+      .on('INSERT', (payload: ChatActivityPayload) => {
+        setChatData(currentData => [payload.new, ...currentData]);
+      })
+      .subscribe();
+  
+    return () => {
+      chatSubscription.unsubscribe();
+    };
+  }, []);
+  
+
   return (
     <div className="p-6 w-[20%] justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
       <div className="flex gap-2 mb-6 ">

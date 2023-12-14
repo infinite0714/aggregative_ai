@@ -1,4 +1,6 @@
-import TextSend from "@/components/text-send";
+
+import PremiumCard from "@/components/premium";
+import { supabase } from "@/lib/supabase";
 import React, { useCallback, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
@@ -17,6 +19,26 @@ const VideoAI = () => {
   const STABLEDDIFFUISION_TOKEN = process.env.NEXT_PUBLIC_STABLEDIFFUSION_API;
 
   const getContent = async () => {
+     if (!searchQuery.trim()) return;
+      try {
+      const { error } = await supabase
+      .from('chat_activities')
+      .insert({
+        title: "Video Inquiry",
+        iconpath: "/path/to/video-icon.svg",
+        time: new Date().toISOString(),
+        description: searchQuery
+      });
+      console.log(error);
+
+      setSearchQuery("");
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+          
+          
     setLoading(true);
     const updatedVideoHistory = [
       ...videoHistory,

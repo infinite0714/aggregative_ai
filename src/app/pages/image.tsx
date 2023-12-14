@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import axios from "axios";
 import Image from "next/image";
 import { toast } from "react-toastify";
@@ -17,6 +18,7 @@ const ImageAI = () => {
   const [loading, setLoading] = useState(false);
 
   const getContent = async () => {
+    if (!searchQuery.trim()) return;
     setLoading(true);
     const updatedImageHistory = [
       ...imageHistory,
@@ -51,6 +53,19 @@ const ImageAI = () => {
           await getImageFunc(keyResponse.data.task_id, updatedImageHistory);
         }, 10000);
       }
+
+
+      const { error } = await supabase
+      .from('chat_activities')
+      .insert({
+        title: "Image Inquiry",
+        iconpath: "/path/to/image-icon.svg",
+        time: new Date().toISOString(),
+        description: searchQuery
+      });
+      console.log(error);
+
+
     } catch (error: any) {
       toast.error("Insufficient token", {
         position: "top-right",
@@ -62,6 +77,7 @@ const ImageAI = () => {
         progress: undefined,
         theme: "dark",
       });
+
       setLoading(false);
     }
   };

@@ -1,14 +1,68 @@
 import Image from "next/image";
-import React from "react";
+import React,{useState,useEffect} from "react";
 import { Button } from "./ui/button";
 import { chatData } from "./chat/chat-data";
+import { supabase } from "@/lib/supabase";
+
+
+interface Chat {
+  id: number;
+  title: string;
+  iconPath: string;
+  time: string;
+  desc: string;
+}
+
+interface ChatActivityPayload {
+  new: Chat;
+}
+
 
 type SidebarProps = {
   onClick?: () => void;
   setCardType: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const Sidebar = ({ onClick, setCardType }: SidebarProps) => {
+const Sidebar = ({ onClick }: SidebarProps) => {
+
+  const [chatData, setChatData] = useState<Chat[]>([]);
+
+  useEffect(() => {
+    const fetchChatData = async () => {
+      const { data, error } = await supabase
+        .from('chat_activities')
+        .select('*')
+        .order('time', { ascending: false });
+        
+        console.log(data)
+  
+      if (error) {
+        console.error('Error fetching chat data:', JSON.stringify(error, null, 2));
+      } else {
+        setChatData(data);
+      }
+    };
+  
+    fetchChatData();
+  
+    const chatSubscription = supabase
+    .channel('public-chat-activities')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_activities' }, payload => {
+      const newChat = payload.new as Chat; 
+      if (newChat) {
+        setChatData(currentData => [newChat, ...currentData]);
+      }
+    })
+    .subscribe();
+  
+
+  return () => {
+    chatSubscription.unsubscribe();
+  };
+  }, []);
+  
+  
+
   return (
     <div className="p-6 w-[100%] z-[100] md:w-[20%]  justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">
       <div

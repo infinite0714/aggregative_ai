@@ -1,9 +1,10 @@
-import TextSend from "@/components/text-send";
 import React, { useCallback, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { ELEVENLABSURL } from "../../config/api";
 import { toast } from "react-toastify";
+import { supabase } from "@/lib/supabase";
+
 interface Chat {
   type: string;
   content: string;
@@ -15,6 +16,18 @@ const AudioAI = () => {
   const [loading, setLoading] = useState(false);
 
   const getContent = async () => {
+    if (!searchQuery.trim()) return;
+    const { error } = await supabase
+      .from('chat_activities')
+      .insert({
+        title: "Audio Inquiry",
+        iconpath: "/path/to/audio-icon.svg",
+        time: new Date().toISOString(),
+        description: searchQuery
+      });
+    console.log(error);
+
+    
     setLoading(true);
     const updatedAudioHistory = [
       ...audioHistory,

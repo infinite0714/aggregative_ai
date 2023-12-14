@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ELEVENLABSURL } from "../../config/api";
 import { toast } from "react-toastify";
 import { supabase } from "@/lib/supabase";
+import Loader from "@/components/Loader";
 
 interface Chat {
   type: string;
@@ -17,51 +18,31 @@ const AudioAI = () => {
 
   const getContent = async () => {
     if (!searchQuery.trim()) return;
-    const { error } = await supabase
-      .from('chat_activities')
-      .insert({
-        title: "Audio Inquiry",
-        iconpath: "/path/to/audio-icon.svg",
-        time: new Date().toISOString(),
-        description: searchQuery
-      });
-    console.log(error);
-
-    
     setLoading(true);
-    const updatedAudioHistory = [
-      ...audioHistory,
-      {
-        type: "question",
-        content: searchQuery,
-      },
-    ];
-
-    setAudioHistory(updatedAudioHistory);
+  
+    const userQuery = { type: "question", content: searchQuery };
+    setAudioHistory(prev => [...prev, userQuery]);
 
     const data = await textToSpeech();
     if (data) {
       const blob = new Blob([data], { type: "audio/mpeg" });
       const url = URL.createObjectURL(blob);
+      const { error } = await supabase
+        .from('chat_activities')
+        .insert({
+          title: "Audio Inquiry",
+          iconpath: "/path/to/audio-icon.svg",
+          time: new Date().toISOString(),
+          description: searchQuery
+        });
+      console.log(error);
 
-      updatedAudioHistory.push({
+      setAudioHistory(prev => [...prev, {
         type: "answer",
         content: url,
-      });
-      setAudioHistory(updatedAudioHistory);
+      }]);
     } else {
-      const msg =
-        "Unusual activity detected. Free Tier usage disabled. If you are using proxy/VPN you might need to purchase a Paid Plan to not trigger our abuse detectors. Free Tier only works if users do not abuse it, for example by creating multiple free accounts. If we notice that many people try to abuse it, we will need to reconsider Free Tier altogether. Please play fair.\nPlease purchase any Paid Subscription to continue.";
-      toast.error(msg, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      setLoading(false);
     }
     setLoading(false);
   };
@@ -83,43 +64,62 @@ const AudioAI = () => {
         responseType: "arraybuffer",
       });
       return speechDetails.data;
-    } catch (error: any) {
-      setLoading(false);
-      toast(error);
+    } catch (error) {
+      console.log(error)
+      let err = "Unusual activity detected. Free Tier usage disabled. If you are using proxy/VPN you might need to purchase a Paid Plan to not trigger our abuse detectors. Free Tier only works if users do not abuse it, for example by creating multiple free accounts. If we notice that many people try to abuse it, we will need to reconsider Free Tier altogether. Please play fair.\nPlease purchase any Paid Subscription to continue.";
+      toast.error(err, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
   return (
     <div className="w-full pt-4">
-      {audioHistory.length > 0 ? (
-        audioHistory.map((item, key) => (
-          <div
-            key={key}
-            className={`ml-4 md:ml-16 ${
-              key === audioHistory.length - 1 ? "pb-20" : ""
-            }`}
-          >
-            <div className="flex items-center">
-              <Image
-                className="text-left mb-4 mt-4 pr-4"
-                src={item.type == "question" ? "/me.png" : "/agai.png"}
-                height={30}
-                width={30}
-                alt=""
-              />
-              {item.type == "question" ? "Me" : "Agai"}
+      {
+        audioHistory.length > 0 ? (
+          audioHistory.map((item, key) => (
+            <div
+              key={key}
+              className={`ml-4 md:ml-16 ${
+                key === audioHistory.length - 1 ? "pb-20" : ""
+              }`}
+            >
+              <div className="flex items-center">
+                <Image
+                  className="text-left mb-4 mt-4 pr-4"
+                  src={item.type == "question" ? "/me.png" : "/agai.png"}
+                  height={30}
+                  width={30}
+                  alt=""
+                />
+                {item.type == "question" ? "Me" : "Agai"}
+              </div>
+              {
+                item.type == "question" ? (
+                  <p className="text-[16px] text-justify pr-8  mb-4 pl-8">
+                    {item.content}
+                  </p>
+                ) 
+                  : 
+                (
+                  <audio className="pl-8" autoPlay controls>
+                    <source src={item.content} type="audio/mpeg" />
+                  </audio>
+                )
+              }
+              {
+                loading && key === audioHistory.length - 1 && ( <Loader /> )
+              }
             </div>
-            {item.type == "question" ? (
-              <p className="text-[16px] text-justify pr-8  mb-4 pl-8">
-                {item.content}
-              </p>
-            ) : (
-              <audio className="pl-8" autoPlay controls>
-                <source src={item.content} type="audio/mpeg" />
-              </audio>
-            )}
-          </div>
-        ))
+          )
+        )
       ) : (
         <div>
           <Image

@@ -19,35 +19,11 @@ const VideoAI = () => {
   const STABLEDDIFFUISION_TOKEN = process.env.NEXT_PUBLIC_STABLEDIFFUSION_API;
 
   const getContent = async () => {
-     if (!searchQuery.trim()) return;
-      try {
-      const { error } = await supabase
-      .from('chat_activities')
-      .insert({
-        title: "Video Inquiry",
-        iconpath: "/path/to/video-icon.svg",
-        time: new Date().toISOString(),
-        description: searchQuery
-      });
-      console.log(error);
-
-      setSearchQuery("");
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
-          
-          
+    if (!searchQuery.trim()) return;
     setLoading(true);
-    const updatedVideoHistory = [
-      ...videoHistory,
-      {
-        type: "question",
-        content: searchQuery,
-      },
-    ];
-    setVideoHistory(updatedVideoHistory);
+    
+    const userQuery = { type: "question", content: searchQuery };
+    setVideoHistory(prev => [...prev, userQuery]);
 
     const data = {
       "key": STABLEDDIFFUISION_TOKEN,
@@ -56,12 +32,13 @@ const VideoAI = () => {
       "scheduler": "LCMScheduler",
       "seconds": 2
     }
+
     try {
       const videoKeyResponse = await axios.post(STABLEDIFFUSION_URL, data);
       if(videoKeyResponse.data.status == 'processing'){
         const fetchURL = videoKeyResponse.data.fetch_result;
         setTimeout(async () => {
-          await getVideoFunc(fetchURL, updatedVideoHistory);
+          await getVideoFunc(fetchURL);
         }, 10000);
       }
     } catch(err){
@@ -69,7 +46,7 @@ const VideoAI = () => {
     }
   }
 
-  const getVideoFunc = async (url: string, videoData: Chat[]) => {
+  const getVideoFunc = async (url: string) => {
     try {
       const data = {
         "key": STABLEDDIFFUISION_TOKEN
@@ -78,16 +55,26 @@ const VideoAI = () => {
 
       if (videoResponse.data.status === "processing") {
         setTimeout(async () => {
-          await getVideoFunc(url, videoData);
+          await getVideoFunc(url);
         }, 10000);
       }
 
       if (videoResponse.data.status === "success") {
-        videoData.push({
+        const { error } = await supabase
+          .from('chat_activities')
+          .insert({
+            title: "Video Inquiry",
+            iconpath: "/path/to/video-icon.svg",
+            time: new Date().toISOString(),
+            description: searchQuery
+          });
+        console.log(error);
+
+        setVideoHistory(prev => [...prev, {
           type: "answer",
-          content: videoResponse.data.output[0]
-        });
-        setVideoHistory(videoData);
+          content: videoResponse.data.output[0],
+        }]);
+
         setSearchQuery("");
         setLoading(false);
       }

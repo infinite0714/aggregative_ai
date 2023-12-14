@@ -1,11 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import axios from "axios";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { MIDJOURNEYIMAGURL, MIDJOURNEYURL } from "../../config/api";
 import ProgressBar from "@/components/progress";
-
 
 interface Chat {
   type: string;
@@ -20,14 +19,9 @@ const ImageAI = () => {
   const getContent = async () => {
     if (!searchQuery.trim()) return;
     setLoading(true);
-    const updatedImageHistory = [
-      ...imageHistory,
-      {
-        type: "question",
-        content: searchQuery,
-      },
-    ];
-    setImageHistory(updatedImageHistory);
+
+    const userQuery = { type: "question", content: searchQuery };
+    setImageHistory(prev => [...prev, userQuery]);
 
     try {
       const data = {
@@ -50,23 +44,11 @@ const ImageAI = () => {
 
       if (keyResponse.data.status === "success") {
         setTimeout(async () => {
-          await getImageFunc(keyResponse.data.task_id, updatedImageHistory);
+          await getImageFunc(keyResponse.data.task_id);
         }, 10000);
       }
-
-
-      const { error } = await supabase
-      .from('chat_activities')
-      .insert({
-        title: "Image Inquiry",
-        iconpath: "/path/to/image-icon.svg",
-        time: new Date().toISOString(),
-        description: searchQuery
-      });
-      console.log(error);
-
-
     } catch (error: any) {
+      console.log(error)
       toast.error("Insufficient token", {
         position: "top-right",
         autoClose: 5000,
@@ -82,25 +64,35 @@ const ImageAI = () => {
     }
   };
 
-  const getImageFunc = async (id: string, data: Chat[]) => {
+  const getImageFunc = async (id: string) => {
     try {
       const imageResponse = await axios.post(MIDJOURNEYURL, { task_id: id });
-
       if (
         imageResponse.data.status === "pending" ||
         imageResponse.data.status === "processing"
       ) {
         setTimeout(async () => {
-          await getImageFunc(imageResponse.data.task_id, data);
+          await getImageFunc(imageResponse.data.task_id);
         }, 10000);
       }
 
       if (imageResponse.data.status === "finished") {
-        data.push({
+        const { error } = await supabase
+          .from('chat_activities')
+          .insert({
+            title: "Image Inquiry",
+            iconpath: "/path/to/image-icon.svg",
+            time: new Date().toISOString(),
+            description: searchQuery
+          });
+        
+        console.log(error);
+
+        setImageHistory(prev => [...prev, {
           type: "answer",
           content: imageResponse.data.task_result.image_url,
-        });
-        setImageHistory(data);
+        }]);
+
         setSearchQuery("");
         setLoading(false);
       }

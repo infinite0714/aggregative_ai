@@ -1,9 +1,7 @@
-import Image from "next/image";
 import React,{useState,useEffect} from "react";
+import Image from "next/image";
 import { Button } from "./ui/button";
-import { chatData } from "./chat/chat-data";
 import { supabase } from "@/lib/supabase";
-
 
 interface Chat {
   id: number;
@@ -17,14 +15,12 @@ interface ChatActivityPayload {
   new: Chat;
 }
 
-
 type SidebarProps = {
   onClick?: () => void;
   setCardType: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const Sidebar = ({ onClick }: SidebarProps) => {
-
+const Sidebar = ({ onClick, setCardType }: SidebarProps) => {
   const [chatData, setChatData] = useState<Chat[]>([]);
 
   useEffect(() => {
@@ -55,13 +51,10 @@ const Sidebar = ({ onClick }: SidebarProps) => {
     })
     .subscribe();
   
-
-  return () => {
-    chatSubscription.unsubscribe();
-  };
+    return () => {
+      chatSubscription.unsubscribe();
+    };
   }, []);
-  
-  
 
   return (
     <div className="p-6 w-[100%] z-[100] md:w-[20%]  justify-center min-h-screen bg-gray-900 border-r border-gray-800  fixed">

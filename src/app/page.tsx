@@ -11,6 +11,7 @@ import AudioAI from "./pages/audio";
 import VideoAI from "./pages/video";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 const Home = () => {
   const [cardType, setCardType] = useState("");
   const onCardButtonClick = useCallback((cardType: string) => {

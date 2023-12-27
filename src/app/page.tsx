@@ -9,6 +9,7 @@ import TextAI from "./pages/text";
 import ImageAI from "./pages/image";
 import AudioAI from "./pages/audio";
 import VideoAI from "./pages/video";
+import ThreeDImageAI from "./pages/three";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -61,6 +62,11 @@ const Home = () => {
                   cardImage="/images/pic4.png"
                   onClick={() => onCardButtonClick("VideoAI")}
                 />
+                <CardWithImage
+                  cardName="3D AI"
+                  cardImage="/images/pic5.gif"
+                  onClick={() => onCardButtonClick("ThreeDImageAI")}
+                />
               </div>
             </div>
 
@@ -73,6 +79,7 @@ const Home = () => {
         {cardType == "ImageAI" && <ImageAI />}
         {cardType == "AudioAI" && <AudioAI />}
         {cardType == "VideoAI" && <VideoAI />}
+        {cardType == "ThreeDImageAI" && <ThreeDImageAI />}
       </div>
       <ToastContainer />
     </div>

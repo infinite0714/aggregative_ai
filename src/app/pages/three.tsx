@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import React, { useCallback, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import { STABLEDIFFUSIONVIDEO_URL } from "../../config/api";
+import { STABLEDIFFUSIONTHREE_URL } from "../../config/api";
 import { toast } from "react-toastify";
 import ProgressBar from "@/components/progress";
 interface Chat {
@@ -12,9 +12,9 @@ interface Chat {
   content: string;
 }
 
-const VideoAI = () => {
+const ThreeDImageAI = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [videoHistory, setVideoHistory] = useState<Chat[]>([]);
+  const [ThreeDImageHistory, setThreeDImageHistory] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(false);
   const STABLEDDIFFUISION_TOKEN = process.env.NEXT_PUBLIC_STABLEDIFFUSION_API;
 
@@ -23,56 +23,61 @@ const VideoAI = () => {
     setLoading(true);
     
     const userQuery = { type: "question", content: searchQuery };
-    setVideoHistory(prev => [...prev, userQuery]);
+    setThreeDImageHistory(prev => [...prev, userQuery]);
 
     const data = {
       "key": STABLEDDIFFUISION_TOKEN,
-      "prompt": searchQuery,
-      "negative_prompt": "",
-      "scheduler": "LCMScheduler",
-      "seconds": 2
+      "prompt":searchQuery,
+      "guidance_scale":20,
+      "steps":30,
+      "frame_size":256,
+      "output_type":"gif",
+      "webhook": null,
+      "track_id": null
     }
 
     try {
-      const videoKeyResponse = await axios.post(STABLEDIFFUSIONVIDEO_URL, data);
-      if(videoKeyResponse.data.status == 'processing'){
-        const fetchURL = videoKeyResponse.data.fetch_result;
+      const ThreeDImageKeyResponse = await axios.post(STABLEDIFFUSIONTHREE_URL, data);
+      if(ThreeDImageKeyResponse.data.status == 'processing'){
+        const fetchURL = ThreeDImageKeyResponse.data.fetch_result;
         setTimeout(async () => {
-          await getVideoFunc(fetchURL);
-        }, 10000);
+          await getThreeDImageFunc(fetchURL);
+        }, 30000);
       }
     } catch(err){
       console.log(err);
     }
   }
 
-  const getVideoFunc = async (url: string) => {
+  const getThreeDImageFunc = async (url: string) => {
     try {
       const data = {
         "key": STABLEDDIFFUISION_TOKEN
       }
-      const videoResponse = await axios.post(url, data);
+      const ThreeDImageResponse = await axios.post(url, data);
 
-      if (videoResponse.data.status === "processing") {
+      if (ThreeDImageResponse.data.status === "processing") {
         setTimeout(async () => {
-          await getVideoFunc(url);
-        }, 10000);
+          await getThreeDImageFunc(url);
+        }, 20000);
+
       }
 
-      if (videoResponse.data.status === "success") {
+      if (ThreeDImageResponse.data.status === "success") {
+        console.log("1111");
         const { error } = await supabase
           .from('chat_activities')
           .insert({
-            title: "Video Inquiry",
-            iconpath: "/path/to/video-icon.svg",
+            title: "ThreeDImage Inquiry",
+            iconpath: "/path/to/three-icon.svg",
             time: new Date().toISOString(),
             description: searchQuery
           });
         console.log(error);
 
-        setVideoHistory(prev => [...prev, {
+        setThreeDImageHistory(prev => [...prev, {
           type: "answer",
-          content: videoResponse.data.output[0],
+          content: ThreeDImageResponse.data.output[0],
         }]);
 
         setSearchQuery("");
@@ -86,12 +91,12 @@ const VideoAI = () => {
 
   return (
     <div className="w-full pt-4">
-      {videoHistory.length > 0 ? (
-        videoHistory.map((item, key) => (
+      {ThreeDImageHistory.length > 0 ? (
+        ThreeDImageHistory.map((item, key) => (
           <div
             key={key}
             className={`ml-4 md:ml-16 ${
-              key === videoHistory.length - 1 ? "pb-20" : ""
+              key === ThreeDImageHistory.length - 1 ? "pb-20" : ""
             }`}
           >
             <div className="flex items-center">
@@ -113,12 +118,16 @@ const VideoAI = () => {
                 ) 
                 : 
                 (
-                  <video className="pl-8" id="myVideo" width="640" height="360" controls>
-                    <source src={item.content} type="video/mp4" />
-                  </video>
+                  <Image
+                    className="m-auto mt-4"
+                    src={item.content}
+                    height={300}
+                    width={300}
+                    alt=""
+                  />
                 )
             }
-          {loading && key === videoHistory.length - 1 && 
+          {loading && key === ThreeDImageHistory.length - 1 && 
             <>
               <ProgressBar  time={120}/>
             </>
@@ -182,4 +191,4 @@ const VideoAI = () => {
   );
 };
 
-export default VideoAI;
+export default ThreeDImageAI;

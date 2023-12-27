@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+
+import PremiumCard from "@/components/premium";
 import { supabase } from "@/lib/supabase";
+import React, { useCallback, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
+import { STABLEDIFFUSIONIMAGE_URL } from "../../config/api";
 import { toast } from "react-toastify";
-import { MIDJOURNEYIMAGURL, MIDJOURNEYURL } from "../../config/api";
 import ProgressBar from "@/components/progress";
-
 interface Chat {
   type: string;
   content: string;
@@ -13,112 +14,118 @@ interface Chat {
 
 const ImageAI = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [imageHistory, setImageHistory] = useState<Chat[]>([]);
+  const [ImageHistory, setImageHistory] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(false);
+  const STABLEDDIFFUISION_TOKEN = process.env.NEXT_PUBLIC_STABLEDIFFUSION_API;
 
   const getContent = async () => {
     if (!searchQuery.trim()) return;
     setLoading(true);
-
+    
     const userQuery = { type: "question", content: searchQuery };
     setImageHistory(prev => [...prev, userQuery]);
 
-    try {
-      const data = {
-        prompt: searchQuery,
-        aspect_ratio: "4:3",
-        process_mode: "fast",
-        webhook_endpoint: "",
-        webhook_secret: "",
-      };
-
-      const GOAPI_KEY = process.env.NEXT_PUBLIC_GOAPI_KEY;
-
-      const headers = {
-        "X-API-KEY": GOAPI_KEY,
-      };
-
-      const keyResponse = await axios.post(MIDJOURNEYIMAGURL, data, {
-        headers,
-      });
-
-      if (keyResponse.data.status === "success") {
-        setTimeout(async () => {
-          await getImageFunc(keyResponse.data.task_id);
-        }, 10000);
-      }
-    } catch (error: any) {
-      console.log(error)
-      toast.error("Insufficient token", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-
-      setLoading(false);
+    const data = {
+      "key": STABLEDDIFFUISION_TOKEN,
+      "prompt":searchQuery,
+      "negative_prompt": null,
+      "width": "512",
+      "height": "512",
+      "samples": "1",
+      "num_inference_steps": "20",
+      "safety_checker": "no",
+      "enhance_prompt": "yes",
+      "seed": null,
+      "guidance_scale": 7.5,
+      "multi_lingual": "no",
+      "panorama": "no",
+      "self_attention": "no",
+      "upscale": "no",
+      "embeddings_model": null,
+      "webhook": null,
+      "track_id": null
     }
-  };
 
-  const getImageFunc = async (id: string) => {
     try {
-      const imageResponse = await axios.post(MIDJOURNEYURL, { task_id: id });
-      if (
-        imageResponse.data.status === "pending" ||
-        imageResponse.data.status === "processing"
-      ) {
+      const imageKeyResponse = await axios.post(STABLEDIFFUSIONIMAGE_URL, data);
+      if(imageKeyResponse.data.status == 'processing'){
+        const fetchURL = imageKeyResponse.data.fetch_result;
         setTimeout(async () => {
-          await getImageFunc(imageResponse.data.task_id);
+          await getImageFunc(fetchURL);
         }, 10000);
       }
-
-      if (imageResponse.data.status === "finished") {
+      if(imageKeyResponse.data.status == "success"){
         const { error } = await supabase
           .from('chat_activities')
           .insert({
             title: "Image Inquiry",
-            iconpath: "/path/to/image-icon.svg",
+            iconpath: "/path/to/three-icon.svg",
             time: new Date().toISOString(),
             description: searchQuery
           });
-        
         console.log(error);
 
         setImageHistory(prev => [...prev, {
           type: "answer",
-          content: imageResponse.data.task_result.image_url,
+          content: imageKeyResponse.data.output[0],
         }]);
 
         setSearchQuery("");
         setLoading(false);
       }
-    } catch (error: any) {
-      toast.error("Network Error!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+    } catch(err){
+      console.log(err);
+    }
+  }
+
+  const getImageFunc = async (url: string) => {
+    try {
+      const data = {
+        "key": STABLEDDIFFUISION_TOKEN
+      }
+      const ImageResponse = await axios.post(url, data);
+      console.log(ImageResponse)
+      if (ImageResponse.data.status === "processing") {
+        setTimeout(async () => {
+          await getImageFunc(url);
+        }, 10000);
+
+      }
+
+      if (ImageResponse.data.status === "success") {
+        console.log("1111");
+        const { error } = await supabase
+          .from('chat_activities')
+          .insert({
+            title: "Image Inquiry",
+            iconpath: "/path/to/three-icon.svg",
+            time: new Date().toISOString(),
+            description: searchQuery
+          });
+        console.log(error);
+
+        setImageHistory(prev => [...prev, {
+          type: "answer",
+          content: ImageResponse.data.output[0],
+        }]);
+
+        setSearchQuery("");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
       setLoading(false);
     }
   };
 
   return (
     <div className="w-full pt-4">
-      {imageHistory.length > 0 ? (
-        imageHistory.map((item, key) => (
+      {ImageHistory.length > 0 ? (
+        ImageHistory.map((item, key) => (
           <div
             key={key}
             className={`ml-4 md:ml-16 ${
-              key === imageHistory.length - 1 ? "pb-20" : ""
+              key === ImageHistory.length - 1 ? "pb-20" : ""
             }`}
           >
             <div className="flex items-center">
@@ -129,27 +136,29 @@ const ImageAI = () => {
                 width={30}
                 alt=""
               />
-              <div className="text-fuchsia-500">
-                {item.type == "question" ? "Me" : "Agai"}
-              </div>
+              {item.type == "question" ? "Me" : "Agai"}
             </div>
-            {item.type == "question" ? (
-              <p className="text-[16px] text-justify pr-8  mb-4 pl-8">
-                {item.content}
-              </p>
-            ) : (
-              <Image
-                className="m-auto mt-4"
-                src={item.content}
-                height={300}
-                width={300}
-                alt=""
-              />
-            )}
-
-            {loading && key === imageHistory.length - 1 && 
+            {
+              item.type == "question" ? 
+                (
+                  <p className="text-[16px] text-justify pr-8  mb-4 pl-8">
+                    {item.content}
+                  </p>
+                ) 
+                : 
+                (
+                  <Image
+                    className="m-auto mt-4"
+                    src={item.content}
+                    height={300}
+                    width={300}
+                    alt=""
+                  />
+                )
+            }
+          {loading && key === ImageHistory.length - 1 && 
             <>
-              <ProgressBar  time={60}/>
+              <ProgressBar  time={12}/>
             </>
             }
           </div>
@@ -176,7 +185,6 @@ const ImageAI = () => {
           placeholder="What are you looking for?"
           onChange={(e: any) => setSearchQuery(e.target.value)}
           disabled={loading}
-          value={searchQuery}
           onKeyPress={(e) => {
             if (e.key === "Enter" && !loading) {
               getContent();
